@@ -10,10 +10,8 @@ const EVENT_TIMEOUT: number = 1000 * 60 * 3;
 
 /*
  * Slack API sends duplicate events causing tracks to be added multiple times
- * to playlists. That's unacceptable and this is used to timeout adding the
- * same song for 5 minutes. Can probable just prevent songs from EVER being
- * added more than once, just need to find a way of doing so without overruning
- * memory.
+ * to playlists. This is used to timeout adding the same song for 5 minutes.
+ * Can probably just prevent songs from EVER being added more than once.
  */
 const timeoutList = new Set();
 
@@ -158,6 +156,13 @@ function executeMentionActions(req: SlackMention, playlistURL: string) {
   }
 }
 
+/*
+ * Searches shared Spotify links for only those corresponding to tracks and
+ * returns their ids.
+ *
+ * @param: links string[] - an array of spotify.com links
+ * @return string[] - an array of track IDs for only links which correspond to tracks
+ */
 function parseValidTrackIds(links: string[]): string[] {
   const matchPattern = /(?<=spotify.com\/track\/)[\w\d]+/;
   return links
