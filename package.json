@@ -4,6 +4,7 @@
   "description": "A service for collaborating on Spotify playlists through slack",
   "main": "dist/main.js",
   "scripts": {
+    "build": "tsc",
     "test": "tsc && ava",
     "ping": "ts-node src/main.ts"
   },
