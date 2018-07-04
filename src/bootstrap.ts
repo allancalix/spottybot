@@ -37,7 +37,19 @@ async function newSpotifyAuth(spotify: any, authCode: string) {
   spotify.setAccessToken(accessToken);
   spotify.setRefreshToken(refreshToken);
 
+  setInterval(() => refreshAuthToken(spotify), 1000 * 60 * 15);
   serve(app, spotify);
+}
+
+async function refreshAuthToken(spotify: any) {
+  try {
+    const res = await spotify.refreshAccessToken();
+    spotify.setAccessToken(res.body.access_token);
+    console.log('Access token has been refreshed');
+    console.log(res);
+  } catch(e) {
+    throw new Error('Failed to refresh access token');
+  }
 }
 
 export function init() {
