@@ -16,6 +16,8 @@ const app = express();
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: true}));
 
+const AUTH_REFRESH_INTERVAL = 1000 * 60 * 30;
+
 function bootstrapSpotify() {
   const spotify = new Spotify({
     clientId: SPOTIFY_CLIENT_ID,
@@ -30,14 +32,23 @@ function bootstrapSpotify() {
 
 async function newSpotifyAuth(spotify: any, authCode: string) {
   const data = await spotify.authorizationCodeGrant(authCode);
-  console.log(data);
   const accessToken: string = data.body['access_token'];
   const refreshToken: string = data.body['refresh_token'];
-  console.log(accessToken);
   spotify.setAccessToken(accessToken);
   spotify.setRefreshToken(refreshToken);
 
+  setInterval(() => refreshAuthToken(spotify), AUTH_REFRESH_INTERVAL);
   serve(app, spotify);
+}
+
+async function refreshAuthToken(spotify: any) {
+  try {
+    const res = await spotify.refreshAccessToken();
+    spotify.setAccessToken(res.body.access_token);
+    console.log('Access token refresh successful');
+  } catch(e) {
+    throw new Error('Failed to refresh access token');
+  }
 }
 
 export function init() {
