@@ -1,6 +1,6 @@
 {
   "name": "spottybot",
-  "version": "0.0.1",
+  "version": "1.0.0",
   "description": "A service for collaborating on Spotify playlists through slack",
   "main": "dist/main.js",
   "scripts": {
