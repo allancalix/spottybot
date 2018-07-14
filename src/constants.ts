@@ -1,7 +1,7 @@
 import fs from 'fs';
 import os from 'os';
 
-import config from './../spottybot.json';
+const config: any = process.env;
 
 // Initialize application data and fail fast if required data is not provided
 export const PORT: number = Number(config.port) || Number(process.env.PORT) || 3000;

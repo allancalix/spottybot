@@ -15,10 +15,8 @@ async function serveSlackRoutes(spotify: any) {
   app.use('/slack', slackRouter);
 }
 
-function main() {
+export function main() {
   const routes = spotify.authenticate(serveSlackRoutes);
   app.use('/spotify', routes);
   app.listen(PORT, () => { console.log(`Started on port ${PORT}`) });
 }
-
-main();

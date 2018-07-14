@@ -1,12 +1,17 @@
 {
   "name": "spottybot",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "A service for collaborating on Spotify playlists through slack",
-  "main": "dist/main.js",
   "scripts": {
     "build": "tsc",
+    "postinstall": "npm run clean && npm run build",
+    "clean": "rm -rf dist",
+    "start": "node dist/main.js",
     "test": "tsc && ava",
     "ping": "ts-node src/main.ts"
+  },
+  "bin": {
+    "spottybot": "./index.js"
   },
   "keywords": [
     "spotify",
