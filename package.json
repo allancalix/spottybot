@@ -4,8 +4,8 @@
   "description": "A service for collaborating on Spotify playlists through slack",
   "scripts": {
     "build": "tsc",
-    "postinstall": "npm run clean && npm run build",
-    "clean": "rm -rf dist",
+    "postinstall": "npm run clean && npm install && npm run build",
+    "clean": "rm -rf dist && rm -rf node_modules",
     "start": "node dist/main.js",
     "test": "tsc && ava",
     "ping": "ts-node src/main.ts"
