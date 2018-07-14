@@ -16,6 +16,13 @@ _Mentioning SpottyBot with the word playlist will post a link to the shared play
 _Mentioning SpottyBot with the word help will let the users know how it works!_
 
 # Use
+__Install Binary from NPM__
+```
+npm i -g spottybot
+spottybot PATH/TO/SPOTTYBOTCONFIG.json
+```
+
+__From Source__
 ```
 git clone https://github.com/allancalix/spottybot.git && npm i
 npm build && node dist/main.js
