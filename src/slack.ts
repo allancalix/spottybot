@@ -1,4 +1,4 @@
-import { Request, Response } from 'express';
+import express, { Request, Response } from 'express';
 import { WebClient } from '@slack/client';
 
 import * as commands from './commands';
@@ -25,22 +25,9 @@ interface SlackMention {
   text: string,
 };
 
-interface SlackLink {
+interface Link {
   url: string,
   domain: string,
-};
-
-interface SlackLinkPosted {
-  channel: string,
-  user: string,
-  message_ts: string,
-  links: SlackLink[],
-};
-
-interface SlackResponse {
-  channel: string,
-  text: string,
-  thread_ts?: string,
 };
 
 const HELP_MESSAGE: string = `
@@ -53,11 +40,12 @@ const HELP_MESSAGE: string = `
 `;
 
 /*
- * @param: app - running express module
  * @param: spotify - authenticated spotify session
+ * @return - Express Router instance with slack routes
  */
-export async function serve(app: any, spotify: any) {
+export async function serve(spotify: any) {
   console.log("Spottybot activated!");
+  const router = express.Router();
   let playlistURL: string;
   try {
     const res: any = await spotify.getPlaylist(ACCOUNT_UNAME, PLAYLIST_ID);
@@ -66,11 +54,9 @@ export async function serve(app: any, spotify: any) {
     throw new Error("Could not retrieve playlist URL");
   }
 
-  app.post('/slack', (req: Request, res: Response) => {
-    interface Link {
-      url: string,
-      domain: string,
-    };
+  router.post('/', (req: Request, res: Response) => {
+    // This is a response required to validate connection to slack
+    if (req.body.challenge) return res.send(req.body.challenge);
 
     const addSongsByTrackID = (spotify: any) => (links: string[]) => {
       const trackIDs = parseValidTrackIds(links);
@@ -80,10 +66,6 @@ export async function serve(app: any, spotify: any) {
       return commands.addSong(spotify, trackURIs);
     }
 
-    // This is a response required to validate connection to slack
-    if (req.body.challenge) {
-      return res.send(req.body.challenge);
-    }
     const event = req.body.event;
     const requestTimestamp: number = event.message_ts || event.event_ts;
     const age = (Date.now() - Math.floor(requestTimestamp * 1000)) / 1000 / 60;
@@ -130,6 +112,7 @@ export async function serve(app: any, spotify: any) {
         break;
     }
   });
+  return router;
 }
 
 function executeMentionActions(req: SlackMention, playlistURL: string) {
